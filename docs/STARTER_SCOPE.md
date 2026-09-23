@@ -25,13 +25,6 @@ The core path is:
 - Old production handoff notes and incremental migration history
 - Hard-coded alert recipient and default administrator credentials
 
-## Pending product decision
+## Product decision
 
-The copied application still contains visible SaaS-style features: accounts, credits, redemption codes, announcements, prompt-library administration, and a general admin console. They are not hidden dead code, and generation currently depends on parts of the account and credit model.
-
-Before removing them, choose one of these boundaries:
-
-- Multi-user starter: keep accounts, history, credits, and a reduced admin console.
-- Personal starter: remove registration, credits, redemption, announcements, and most administration; use a single operator-owned deployment.
-
-Do not mix both models in the tutorial. The deployment steps, database schema, security requirements, and user-facing legal copy differ materially.
+Gloopix Starter is the multi-user version. Keep accounts, history, credits, and the administration needed to run an independent multi-user site. The separate Gloopix Lite project is the personal, single-operator version. Do not mix their deployment steps, database schema, security requirements, or user-facing legal copy.

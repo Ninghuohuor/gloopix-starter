@@ -1,6 +1,6 @@
 # Gloopix Starter
 
-Gloopix Starter is a clean, independently deployable starting point for an AI image-generation website. It was derived from the private Gloopix application without copying its Git history, runtime database, uploaded images, production configuration, or secrets.
+Gloopix Starter is a clean, independently deployable starting point for a multi-user AI image-generation website. It was derived from the private Gloopix application without copying its Git history, runtime database, uploaded images, production configuration, or secrets.
 
 This repository is a starter project, not the source code or operational state of the live Gloopix service.
 
@@ -30,24 +30,34 @@ See [docs/STARTER_SCOPE.md](docs/STARTER_SCOPE.md) before adding features back.
 
 ## Local development
 
-Requirements: Node.js 20 or newer and npm.
+Requirements: Node.js 20 or newer and npm. First install dependencies and create your private configuration file:
 
 ```bash
 npm install
 cp .env.example .env
+```
+
+Edit `.env` before continuing. Set `ADMIN_EMAIL` to the email address you will use to sign in and `ADMIN_PASSWORD` to a password you choose (at least 12 characters). Also replace `AUTH_SECRET` with a long random value. There is **no default administrator account or password**.
+
+For example, the relevant `.env` entries are:
+
+```dotenv
+AUTH_SECRET="replace-with-a-long-random-value"
+ADMIN_EMAIL="you@example.com"
+ADMIN_PASSWORD="choose-your-own-password-of-at-least-12-characters"
+```
+
+These are placeholders, not working credentials. Keep `.env` private and never commit it. After the first administrator is created, remove `ADMIN_PASSWORD` from `.env`; the password is stored as a hash in the database. Running `npm run seed` again does not change an existing administrator's password. Use the account page to change it after signing in.
+
+Then initialize the database, create the first administrator, and start the site:
+
+```bash
 npx prisma migrate dev
+npm run seed
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
-To create the first administrator, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env`, then run:
-
-```bash
-npm run seed
-```
-
-`ADMIN_PASSWORD` must contain at least 12 characters. No default administrator password is included.
+The seed command reads `.env` and exits with an error if the administrator settings are missing or invalid. Open `http://localhost:3000/login` and sign in with the email and password you chose. New users can register separately when registration is enabled.
 
 After signing in as an administrator, open **Admin → Site Settings**. You can add multiple API instances using OpenAI Images-compatible, Google Gemini image-generation, or a configurable asynchronous-task protocol. Use **OpenAI Images-compatible** for relays that implement that API. The asynchronous option sends a JSON generation request with a Bearer key, then polls a task by ID; its submit/poll paths, response JSON paths, status values, and optional multipart reference-image upload can be configured per API. It is not a universal adapter for every asynchronous API—check the relay's protocol before selecting it. Existing APIMart-style configurations without protocol fields keep using the legacy adapter until explicitly migrated. Each API can expose multiple models. Logo and favicon assets are uploaded directly; saved API keys are encrypted and never returned to the browser.
 
@@ -67,7 +77,7 @@ npm run build
 
 ## Before publishing
 
-- Decide whether the Starter should keep accounts, credits, announcements, and the admin console.
+- Check that the multi-user features you want to offer are configured for your site.
 - Review and customize the terms and privacy pages for the actual operator and deployment region.
 - Test one complete deployment and image-generation flow using a new API key created for that deployment.
 - Run a final secret and personal-data scan.

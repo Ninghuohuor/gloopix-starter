@@ -7,7 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx tests/*.test.ts",
+    "test": "tsx --test tests/*.test.ts",
     "test:providers": "tsx scripts/test-image-providers.ts",
     "seed": "npx tsx prisma/seed.ts"
   },

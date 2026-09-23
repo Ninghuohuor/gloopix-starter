@@ -49,6 +49,7 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<"logo" | "favicon" | null>(null);
   const [newProviderId, setNewProviderId] = useState<string | null>(null);
+  const [selectedProviderId, setSelectedProviderId] = useState<string | null>(null);
   const [testingModel, setTestingModel] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<Record<string, { success: boolean; message: string }>>({});
   const testRevision = useRef(0);
@@ -112,7 +113,15 @@ export default function AdminSettingsPage() {
     if (!settings) return;
     const provider = newProvider(settings.providers.length + 1);
     setSettings({ ...settings, providers: [...settings.providers, provider] });
+    setSelectedProviderId(provider.id);
     setNewProviderId(provider.id);
+  }
+
+  function removeProvider(index: number) {
+    if (!settings || settings.providers.length === 1) return;
+    const providers = settings.providers.filter((_, providerIndex) => providerIndex !== index);
+    setSettings({ ...settings, providers });
+    setSelectedProviderId(providers[Math.min(index, providers.length - 1)].id);
   }
 
   async function uploadAsset(kind: "logo" | "favicon", file?: File) {
@@ -166,6 +175,9 @@ export default function AdminSettingsPage() {
 
   if (loading) return <p className="py-10 text-sm text-muted-foreground">正在加载设置…</p>;
   if (!settings) return <p className="py-10 text-sm text-destructive">设置加载失败，请刷新后重试。</p>;
+  const activeProviderId = settings.providers.some((provider) => provider.id === selectedProviderId)
+    ? selectedProviderId
+    : settings.providers[0]?.id;
 
   return <div className="space-y-6 pb-24">
     <div><h1 className="text-2xl font-semibold">站点设置</h1><p className="mt-1 text-sm text-muted-foreground">配置品牌、开放功能、默认生成参数和多个图片 API。</p></div>
@@ -216,15 +228,39 @@ export default function AdminSettingsPage() {
       <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <CardTitle className="text-base">图片 API</CardTitle>
-          <p className="mt-1 text-sm text-muted-foreground">每个 API 单独配置连接信息和模型。密钥加密保存且不会回显。</p>
+          <p className="mt-1 text-sm text-muted-foreground">先选择一个 API，再编辑它的连接和模型。密钥加密保存且不会回显。</p>
         </div>
         <Button type="button" variant="outline" className="h-11 shrink-0" onClick={addProvider}>
           <Plus className="mr-2 h-4 w-4" />添加 API
         </Button>
       </CardHeader>
-      <CardContent className="space-y-8">
-        {settings.providers.map((provider, providerIndex) => (
-          <section key={provider.id} aria-labelledby={`provider-heading-${provider.id}`} className="overflow-hidden rounded-xl border border-foreground/20 bg-background shadow-sm">
+      <CardContent className="space-y-5">
+        <nav aria-label="API 列表" className="grid gap-2 sm:grid-cols-2">
+          {settings.providers.map((provider, providerIndex) => {
+            const selected = provider.id === activeProviderId;
+            const hasKey = Boolean(apiKeys[provider.id]?.trim()) || (provider.hasApiKey && !clearApiKeys[provider.id]);
+            return <button
+              key={provider.id}
+              type="button"
+              aria-pressed={selected}
+              aria-controls={selected ? `provider-editor-${provider.id}` : undefined}
+              onClick={() => setSelectedProviderId(provider.id)}
+              className={`min-h-20 rounded-lg border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selected ? "border-primary/70 bg-primary/10" : "border-border bg-background hover:border-foreground/30 hover:bg-muted/30"}`}
+            >
+              <span className="flex items-center justify-between gap-3">
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">{String(providerIndex + 1).padStart(2, "0")}</span>
+                  <span className="truncate text-sm font-semibold" title={provider.name.trim() || `未命名 API ${providerIndex + 1}`}>{provider.name.trim() || `未命名 API ${providerIndex + 1}`}</span>
+                </span>
+                <span className={`shrink-0 text-xs ${provider.enabled ? "text-foreground" : "text-muted-foreground"}`}>{provider.enabled ? "已启用" : "已关闭"}</span>
+              </span>
+              <span className="mt-1.5 block truncate pl-[1.9rem] text-xs text-muted-foreground">{providerLabels[provider.type]} · {provider.models.length} 个模型 · {hasKey ? "密钥已配置" : "密钥待配置"}</span>
+            </button>;
+          })}
+        </nav>
+
+        {settings.providers.map((provider, providerIndex) => provider.id === activeProviderId && (
+          <section key={provider.id} id={`provider-editor-${provider.id}`} aria-labelledby={`provider-heading-${provider.id}`} className="overflow-hidden rounded-xl border border-foreground/20 bg-background shadow-sm">
             <header className="flex flex-wrap items-center justify-between gap-3 border-b border-foreground/15 bg-muted/40 px-4 py-4 sm:px-5">
               <div className="flex min-w-0 items-center gap-3">
                 <span className="flex h-10 min-w-10 shrink-0 items-center justify-center rounded-lg border bg-background px-2 text-xs font-semibold tabular-nums">{String(providerIndex + 1).padStart(2, "0")}</span>
@@ -242,10 +278,10 @@ export default function AdminSettingsPage() {
             <div className="space-y-6 p-4 sm:p-5">
               <div>
                 <h4 className="mb-4 text-sm font-semibold">连接配置</h4>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
                   <Field label="API 名称" htmlFor={`provider-name-${provider.id}`}><Input id={`provider-name-${provider.id}`} className="h-11" value={provider.name} onChange={(e) => patchProvider(providerIndex, { name: e.target.value })} /></Field>
                   <Field label="接口类型" info="OpenAI Images 兼容中转站请选择第一项。异步任务适用于 JSON 提交、按任务 ID 轮询的接口，需要按服务商文档配置路径与响应字段。"><select className="h-11 w-full rounded-md border bg-background px-3 text-sm" value={provider.type} onChange={(e) => { const type = e.target.value as ImageProviderType; patchProvider(providerIndex, { type, asyncTask: type === "ASYNC_TASK_COMPATIBLE" ? provider.asyncTask || { ...DEFAULT_ASYNC_TASK_PROTOCOL } : provider.asyncTask }); }}>{Object.entries(providerLabels).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></Field>
-                  <div className="sm:col-span-2"><Field label="API Base URL" info="上游接口的根地址，通常需要包含版本路径，例如 https://api.openai.com/v1。" hint="填写接口根地址和版本路径。"><Input className="h-11" type="url" value={provider.baseUrl} onChange={(e) => patchProvider(providerIndex, { baseUrl: e.target.value })} /></Field></div>
+                  <Field label="API Base URL" info="上游接口的根地址，通常需要包含版本路径，例如 https://api.openai.com/v1。" hint="填写接口根地址和版本路径。"><Input className="h-11" type="url" value={provider.baseUrl} onChange={(e) => patchProvider(providerIndex, { baseUrl: e.target.value })} /></Field>
                   <Field label="API Key" hint={provider.hasApiKey ? "已配置；留空保持不变。" : "尚未配置。"}><Input className="h-11" type="password" autoComplete="new-password" placeholder={provider.hasApiKey ? "留空以保留当前密钥" : "输入 API Key"} value={apiKeys[provider.id] || ""} onChange={(e) => { testRevision.current += 1; setTestResults({}); setApiKeys({ ...apiKeys, [provider.id]: e.target.value }); setClearApiKeys({ ...clearApiKeys, [provider.id]: false }); }} /></Field>
                 </div>
                 {provider.hasApiKey && <label className="mt-2 flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={clearApiKeys[provider.id] || false} onChange={(e) => { testRevision.current += 1; setTestResults({}); setClearApiKeys({ ...clearApiKeys, [provider.id]: e.target.checked }); }} />清除已保存的 API Key</label>}
@@ -306,7 +342,7 @@ export default function AdminSettingsPage() {
                   ))}
                 </div>
               </div>
-              <div className="flex justify-end border-t pt-2"><Button type="button" variant="ghost" className="text-destructive" disabled={settings.providers.length === 1} onClick={() => setSettings({ ...settings, providers: settings.providers.filter((_, index) => index !== providerIndex) })}><Trash2 className="mr-2 h-4 w-4" />删除此 API</Button></div>
+              <div className="flex justify-end border-t pt-2"><Button type="button" variant="ghost" className="text-destructive" disabled={settings.providers.length === 1} onClick={() => removeProvider(providerIndex)}><Trash2 className="mr-2 h-4 w-4" />删除此 API</Button></div>
             </div>
           </section>
         ))}
