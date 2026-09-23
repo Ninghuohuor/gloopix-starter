@@ -1,0 +1,122 @@
+import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+
+const schemaSource = readFileSync("prisma/schema.prisma", "utf8");
+const headerSource = readFileSync("src/components/layout/header.tsx", "utf8");
+const adminLayoutSource = readFileSync("src/app/admin/layout.tsx", "utf8");
+const validationsSource = readFileSync("src/lib/validations.ts", "utf8");
+
+assert.match(schemaSource, /model PromptLibraryItem/);
+assert.match(schemaSource, /imageUrl\s+String/);
+assert.match(schemaSource, /imageUrls\s+String\?/);
+assert.match(schemaSource, /model\s+String\s+@default\("gpt-image-2"\)/);
+assert.match(schemaSource, /prompt\s+String/);
+assert.match(schemaSource, /isActive\s+Boolean\s+@default\(true\)/);
+assert.match(schemaSource, /createdById\s+String/);
+
+assert.match(headerSource, /href:\s*"\/prompts"/);
+assert.match(headerSource, /label:\s*"提示词"/);
+
+assert.match(adminLayoutSource, /href:\s*"\/admin\/prompts"/);
+assert.match(adminLayoutSource, /label:\s*"提示词管理"/);
+
+assert.match(validationsSource, /promptLibraryItemSchema/);
+assert.match(validationsSource, /imageUrl/);
+assert.match(validationsSource, /imageUrls/);
+assert.match(validationsSource, /model:[\s\S]*gpt-image-2/);
+assert.match(validationsSource, /max\(10,\s*"最多上传 10 张图片"\)/);
+assert.match(validationsSource, /prompt/);
+
+assert.ok(existsSync("src/app/prompts/page.tsx"));
+const publicPageSource = readFileSync("src/app/prompts/page.tsx", "utf8");
+assert.match(publicPageSource, /提示词库/);
+assert.doesNotMatch(publicPageSource, /inviteCode|Indream/);
+assert.match(publicPageSource, /\/api\/prompts/);
+assert.match(publicPageSource, /PROMPT_MODEL_FILTERS/);
+assert.match(publicPageSource, /GPT-Image-2/);
+assert.match(publicPageSource, /selectedModelFilter/);
+assert.match(publicPageSource, /visibleItems/);
+assert.match(publicPageSource, /提示词模型筛选/);
+assert.match(publicPageSource, /复制提示词/);
+assert.match(publicPageSource, /selectedPreviewImage/);
+assert.match(publicPageSource, /DialogContent/);
+assert.match(publicPageSource, /activeImageIndexes/);
+assert.match(publicPageSource, /getItemImageUrls/);
+assert.match(publicPageSource, /setActiveImageIndex/);
+assert.match(publicPageSource, /切换提示词参考图/);
+assert.match(publicPageSource, /查看第 \$\{index \+ 1\} 张参考图/);
+assert.match(publicPageSource, /hover:scale-\[1\.02\]/);
+assert.match(publicPageSource, /h-auto w-full/);
+assert.match(publicPageSource, /h-\[min\(78vh,900px\)\]/);
+assert.match(publicPageSource, /max-h-full max-w-full object-contain/);
+assert.doesNotMatch(publicPageSource, /max-h-\[78vh\] overflow-auto/);
+assert.match(publicPageSource, /splitPromptItemsIntoColumns/);
+assert.match(publicPageSource, /columnCount/);
+assert.match(publicPageSource, /grid-cols-1/);
+assert.match(publicPageSource, /sm:grid-cols-2/);
+assert.match(publicPageSource, /lg:grid-cols-3/);
+assert.match(publicPageSource, /space-y-4/);
+assert.doesNotMatch(publicPageSource, /columns-1/);
+assert.doesNotMatch(publicPageSource, /sm:columns-2/);
+assert.doesNotMatch(publicPageSource, /lg:columns-3/);
+assert.doesNotMatch(publicPageSource, /break-inside-avoid/);
+assert.match(publicPageSource, /line-clamp-9/);
+assert.match(publicPageSource, /expandedPromptIds/);
+assert.match(publicPageSource, /overflowingPromptIds/);
+assert.match(publicPageSource, /measurePromptOverflow/);
+assert.match(publicPageSource, /aria-expanded/);
+assert.match(publicPageSource, /展开/);
+assert.match(publicPageSource, /收起/);
+assert.doesNotMatch(publicPageSource, /aspect-\[4\/5\]/);
+assert.doesNotMatch(publicPageSource, /line-clamp-4/);
+
+assert.ok(existsSync("src/app/admin/prompts/page.tsx"));
+const adminPageSource = readFileSync("src/app/admin/prompts/page.tsx", "utf8");
+assert.match(adminPageSource, /提示词管理/);
+assert.match(adminPageSource, /\/api\/admin\/prompts/);
+assert.match(adminPageSource, /\/api\/admin\/prompts\/upload/);
+assert.match(adminPageSource, /正在压缩上传/);
+assert.match(adminPageSource, /自动压缩为清晰 WebP 图片/);
+assert.match(adminPageSource, /最多 10 张/);
+assert.match(adminPageSource, /multiple/);
+assert.match(adminPageSource, /setImageUrls/);
+assert.match(adminPageSource, /removeImageUrl/);
+assert.match(adminPageSource, /上传图片/);
+assert.match(adminPageSource, /保存/);
+assert.match(adminPageSource, /删除/);
+assert.match(adminPageSource, /编辑/);
+assert.doesNotMatch(adminPageSource, /FileReader/);
+
+assert.ok(existsSync("src/app/api/prompts/route.ts"));
+const publicRouteSource = readFileSync("src/app/api/prompts/route.ts", "utf8");
+assert.match(publicRouteSource, /prisma\.promptLibraryItem\.findMany/);
+assert.match(publicRouteSource, /isActive:\s*true/);
+assert.match(publicRouteSource, /formatPromptLibraryItem/);
+assert.match(publicRouteSource, /model:\s*true/);
+
+assert.ok(existsSync("src/app/api/admin/prompts/route.ts"));
+const adminRouteSource = readFileSync("src/app/api/admin/prompts/route.ts", "utf8");
+assert.match(adminRouteSource, /requireAdmin/);
+assert.match(adminRouteSource, /export async function GET/);
+assert.match(adminRouteSource, /export async function POST/);
+assert.match(adminRouteSource, /promptLibraryItemSchema/);
+assert.match(adminRouteSource, /serializePromptImageUrls/);
+assert.match(adminRouteSource, /model:\s*parsed\.data\.model/);
+assert.match(adminRouteSource, /createdById:\s*session!\.user\.id/);
+
+assert.ok(existsSync("src/app/api/admin/prompts/[id]/route.ts"));
+const adminItemRouteSource = readFileSync("src/app/api/admin/prompts/[id]/route.ts", "utf8");
+assert.match(adminItemRouteSource, /export async function PATCH/);
+assert.match(adminItemRouteSource, /export async function DELETE/);
+assert.match(adminItemRouteSource, /isActive:\s*false/);
+
+assert.ok(existsSync("src/app/api/admin/prompts/upload/route.ts"));
+const uploadRouteSource = readFileSync("src/app/api/admin/prompts/upload/route.ts", "utf8");
+assert.match(uploadRouteSource, /requireAdmin/);
+assert.match(uploadRouteSource, /sharp/);
+assert.match(uploadRouteSource, /PROMPT_IMAGE_MAX_EDGE = 2000/);
+assert.match(uploadRouteSource, /PROMPT_IMAGE_WEBP_QUALITY = 86/);
+assert.match(uploadRouteSource, /fit:\s*"inside"/);
+assert.match(uploadRouteSource, /withoutEnlargement:\s*true/);
+assert.match(uploadRouteSource, /\/uploads\/prompts\//);
+assert.match(uploadRouteSource, /\.webp/);

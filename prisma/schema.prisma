@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  passwordHash   String
+  name           String?
+  credits        Int       @default(0)
+  role           String    @default("USER")
+  isDisabled     Boolean   @default(false)
+  lastLoginAt    DateTime?
+  lastActiveAt   DateTime?
+  lastLoginBonus DateTime?
+  registerIp     String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  images             Image[]
+  creditTransactions CreditTransaction[]
+  redeemedCodes      RedemptionCode[]    @relation("RedeemedBy")
+  createdCodes       RedemptionCode[]    @relation("CreatedBy")
+  announcements      Announcement[]
+  promptLibraryItems PromptLibraryItem[]
+  generationTasks    GenerationTask[]
+
+  @@index([registerIp, createdAt])
+}
+
+model Image {
+  id           String    @id @default(cuid())
+  userId       String
+  prompt       String
+  imageUrl     String
+  thumbnailUrl String?
+  status       String    @default("COMPLETED")
+  generationId String?
+  model        String    @default("gpt-image-2")
+  aspectRatio  String    @default("auto")
+  quality      String    @default("low")
+  resolution   String    @default("1k")
+  quantity     Int       @default(1)
+  createdAt    DateTime  @default(now())
+  completedAt  DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, generationId, createdAt])
+}
+
+model GenerationTask {
+  id                 String    @id
+  userId             String
+  prompt             String
+  referenceImages    String?
+  imageIds           String
+  model              String    @default("gpt-image-2")
+  aspectRatio        String    @default("auto")
+  quality            String    @default("low")
+  resolution         String    @default("1k")
+  quantity           Int       @default(1)
+  creditCostPerImage Int
+  status             String    @default("QUEUED")
+  attempts           Int       @default(0)
+  lockedAt           DateTime?
+  lockedBy           String?
+  nextRunAt          DateTime  @default(now())
+  lastError          String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  completedAt        DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([status, nextRunAt, createdAt])
+  @@index([userId, status, createdAt])
+  @@index([lockedAt])
+}
+
+model GenerationAlert {
+  key        String   @id
+  lastSentAt DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model RedemptionCode {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  credits     Int
+  source      String    @default("MANUAL")
+  isActive    Boolean   @default(true)
+  usedById    String?
+  usedAt      DateTime?
+  usedIp      String?
+  createdById String
+  createdAt   DateTime  @default(now())
+
+  usedBy    User? @relation("RedeemedBy", fields: [usedById], references: [id])
+  createdBy User  @relation("CreatedBy", fields: [createdById], references: [id])
+
+  @@index([source, usedIp, usedAt])
+}
+
+model CreditTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  type      String
+  relatedId String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  content     String
+  imageUrl    String?
+  isActive    Boolean  @default(true)
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy User @relation(fields: [createdById], references: [id])
+
+  @@index([isActive, createdAt])
+}
+
+model EmailVerificationCode {
+  id         String    @id @default(cuid())
+  email      String
+  codeHash   String
+  purpose    String    @default("REGISTER")
+  expiresAt  DateTime
+  consumedAt DateTime?
+  attempts   Int       @default(0)
+  createdAt  DateTime  @default(now())
+
+  @@index([email, purpose, consumedAt, expiresAt])
+}
+
+model LoginFailure {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  failureCount Int       @default(0)
+  lockedUntil  DateTime?
+  lastIp       String?
+  lastFailedAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([lockedUntil])
+  @@index([lastIp, lastFailedAt])
+}
+
+model PromptLibraryItem {
+  id          String   @id @default(cuid())
+  imageUrl    String
+  imageUrls   String?
+  model       String   @default("gpt-image-2")
+  prompt      String
+  isActive    Boolean  @default(true)
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy User @relation(fields: [createdById], references: [id])
+
+  @@index([isActive, createdAt])
+}
+
+model ApiSettings {
+  id                   String   @id @default("default")
+  provider             String   @default("OPENAI_COMPATIBLE")
+  baseUrl              String
+  encryptedApiKey      String?
+  modelsJson           String   @default("[]")
+  providersJson        String   @default("[]")
+  siteName             String   @default("AI Image Starter")
+  siteDescription      String   @default("AI 图片生成服务")
+  logoText             String   @default("LOGO")
+  logoUrl              String?
+  faviconUrl           String?
+  browserTitle         String   @default("AI Image Starter")
+  registrationEnabled  Boolean  @default(true)
+  newUserCredits       Int      @default(0)
+  promptLibraryEnabled Boolean  @default(true)
+  creditsEnabled       Boolean  @default(true)
+  announcementsEnabled Boolean  @default(true)
+  defaultModel         String?
+  defaultResolution    String   @default("1k")
+  defaultQuantity      Int      @default(1)
+  operatorName         String   @default("")
+  contactEmail         String   @default("")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
