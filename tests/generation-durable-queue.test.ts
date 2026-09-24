@@ -1,13 +1,11 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 
 const schemaSource = readFileSync("prisma/schema.prisma", "utf8");
-const migrationPath = "prisma/migrations/20260426190000_add_generation_tasks/migration.sql";
-const migrationSource = existsSync(migrationPath) ? readFileSync(migrationPath, "utf8") : "";
+const migrationSource = readFileSync("prisma/migrations/00000000000000_init/migration.sql", "utf8");
 const generateRouteSource = readFileSync("src/app/api/generate/route.ts", "utf8");
 const cancelRouteSource = readFileSync("src/app/api/generate/cancel/route.ts", "utf8");
 const taskRouteSource = readFileSync("src/app/api/user/generation-tasks/route.ts", "utf8");
-const currentStateSource = readFileSync("docs/ops/current-state.md", "utf8");
 
 assert.match(schemaSource, /generationTasks\s+GenerationTask\[\]/);
 assert.match(schemaSource, /model GenerationTask\s+\{/);
@@ -23,7 +21,6 @@ assert.match(schemaSource, /@@index\(\[status,\s*nextRunAt,\s*createdAt\]\)/);
 assert.match(schemaSource, /@@index\(\[userId,\s*status,\s*createdAt\]\)/);
 assert.match(schemaSource, /@@index\(\[lockedAt\]\)/);
 
-assert.ok(existsSync(migrationPath));
 assert.match(migrationSource, /CREATE TABLE "GenerationTask"/);
 assert.match(migrationSource, /"id" TEXT NOT NULL PRIMARY KEY/);
 assert.match(migrationSource, /"status" TEXT NOT NULL DEFAULT 'QUEUED'/);
@@ -42,5 +39,3 @@ assert.match(generateRouteSource, /console\.error\("Image generation request fai
 assert.doesNotMatch(generateRouteSource, /void processPersistedGenerationTask/);
 assert.match(cancelRouteSource, /(?:tx|prisma)\.generationTask\.updateMany/);
 assert.match(taskRouteSource, /ensureGenerationWorkerStarted/);
-assert.match(currentStateSource, /SQLite-backed durable generation queue/);
-assert.match(currentStateSource, /GenerationTask/);

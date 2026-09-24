@@ -29,7 +29,7 @@ assert.match(pageSource, /selectedQuality:\s*quality/);
 assert.match(pageSource, /selectedQuality:\s*message\.quality/);
 
 assert.match(routeSource, /parsed\.data\.quality/);
-assert.match(routeSource, /calculateImageCreditCost/);
+assert.match(routeSource, /getModelCreditCost/);
 assert.match(routeSource, /quality:\s*parsed\.data\.quality/);
 
 assert.match(openaiSource, /quality\?:\s*"low" \| "medium" \| "high"/);
@@ -38,4 +38,4 @@ assert.match(openaiSource, /quality,\s*resolution,\s*filepath/s);
 assert.match(apimartSource, /quality\?:\s*"low" \| "medium" \| "high"/);
 assert.match(apimartSource, /quality = "low"/);
 assert.match(apimartSource, /supportsQuality \? \{ quality \}/);
-assert.doesNotMatch(apimartSource, /quality:\s*"low"/);
+assert.match(apimartSource, /modelConfig\.supportsQuality \? quality : undefined/);

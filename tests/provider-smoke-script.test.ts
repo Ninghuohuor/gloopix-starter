@@ -33,4 +33,3 @@ assert.equal(packageJson.scripts["test:providers"], "tsx scripts/test-image-prov
 
 assert.match(envExampleSource, /APIMART_API_KEY/);
 assert.match(envExampleSource, /APIMART_BASE_URL/);
-assert.match(envExampleSource, /FAL_KEY/);

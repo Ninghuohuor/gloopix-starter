@@ -10,7 +10,7 @@ const authenticatedNavEnd = headerSource.indexOf("const navigationLinks", authen
 const authenticatedNavSource = headerSource.slice(authenticatedNavStart, authenticatedNavEnd);
 
 assert.match(headerSource, /<Link[\s\S]*href="\/"[\s\S]*aria-label="返回生图页面"[\s\S]*className="[^"]*mr-2[^"]*font-bold[^"]*sm:mr-6[^"]*"/);
-assert.match(headerSource, /Gloopix\s*<\/Link>/);
+assert.match(headerSource, /\{branding\.logoText\}/);
 assert.doesNotMatch(headerSource, /<span className="mr-2 flex items-center space-x-2 font-bold sm:mr-6">/);
 
 const expectedOrder = ["生成", "积分", "历史", "提示词", "管理后台"];

@@ -28,7 +28,7 @@ assert.match(composerSource, /field-sizing-content/);
 assert.match(composerSource, /border-0/);
 assert.match(composerSource, /resize-none/);
 assert.match(composerSource, /Bottom Action Bar/);
-assert.match(composerSource, /AVAILABLE_MODELS/);
+assert.match(composerSource, /imageModels\.map\(/);
 assert.match(composerSource, /AVAILABLE_ASPECT_RATIOS/);
 assert.match(composerSource, /AVAILABLE_QUALITIES/);
 assert.match(composerSource, /AVAILABLE_RESOLUTIONS/);

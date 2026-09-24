@@ -10,7 +10,7 @@ const generationTasksRouteSource = readFileSync(
 );
 const adminGuardSource = readFileSync("src/lib/admin-guard.ts", "utf8");
 const migrationSource = readFileSync(
-  "prisma/migrations/20260429101500_add_user_last_active_at/migration.sql",
+  "prisma/migrations/00000000000000_init/migration.sql",
   "utf8"
 );
 
@@ -21,7 +21,7 @@ assert.match(userActivitySource, /lastActiveAt:\s*\{\s*lt:\s*cutoff/);
 assert.match(userActivitySource, /lastActiveAt:\s*now/);
 assert.match(userActivitySource, /catch \(error\)/);
 assert.match(userActivitySource, /console\.warn\(\s*"Failed to touch user activity"/);
-assert.match(migrationSource, /ADD COLUMN "lastActiveAt" DATETIME/);
+assert.match(migrationSource, /"lastActiveAt" DATETIME/);
 
 assert.match(creditsRouteSource, /touchUserActivity\(session\.user\.id\)/);
 assert.match(generateRouteSource, /touchUserActivity\(session\.user\.id\)/);

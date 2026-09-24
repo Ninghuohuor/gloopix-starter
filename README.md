@@ -52,10 +52,12 @@ These are placeholders, not working credentials. Keep `.env` private and never c
 Then initialize the database, create the first administrator, and start the site:
 
 ```bash
-npx prisma migrate dev
+npm run db:init
 npm run seed
 npm run dev
 ```
+
+`db:init` creates the local SQLite file if it does not exist, then applies the committed migrations. It is safe to run again after updating the project; it does not reset an existing database.
 
 The seed command reads `.env` and exits with an error if the administrator settings are missing or invalid. Open `http://localhost:3000/login` and sign in with the email and password you chose. New users can register separately when registration is enabled.
 

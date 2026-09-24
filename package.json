@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "tsx --test tests/*.test.ts",
+    "db:init": "tsx scripts/prepare-sqlite.ts && prisma migrate deploy",
     "test:providers": "tsx scripts/test-image-providers.ts",
     "seed": "npx tsx prisma/seed.ts"
   },

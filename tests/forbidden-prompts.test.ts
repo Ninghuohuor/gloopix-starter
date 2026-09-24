@@ -11,7 +11,7 @@ const providerSource = readFileSync("src/components/generation/generation-sessio
 
 assert.equal(FORBIDDEN_PROMPT_MESSAGE, "提示词里包含违规词，无法生成图片。");
 assert.equal(containsForbiddenPromptTerm("这是一段正常提示词"), false);
-assert.equal(containsForbiddenPromptTerm("提示词里有 违 规 词"), true);
+assert.equal(containsForbiddenPromptTerm("提示词里有 色 情 内容"), true);
 
 assert.match(forbiddenSource, /DEFAULT_FORBIDDEN_PROMPT_TERMS/);
 assert.match(forbiddenSource, /FORBIDDEN_PROMPT_TERMS/);

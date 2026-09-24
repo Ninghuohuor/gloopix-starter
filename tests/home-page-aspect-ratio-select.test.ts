@@ -8,11 +8,11 @@ const validationsSource = readFileSync("src/lib/validations.ts", "utf8");
 
 assert.match(validationsSource, /AVAILABLE_ASPECT_RATIOS/);
 assert.match(composerSource, /getAvailableAspectRatiosForModel/);
-assert.match(composerSource, /availableAspectRatios\.map/);
+assert.match(composerSource, /aspectRatioOptions\.map/);
 assert.match(providerSource, /const \[aspectRatio, setAspectRatio\] = useState\("auto"\)/);
 assert.match(source, /selectedAspectRatio/);
 assert.match(source, /isAspectRatioCompatibleWithModel/);
-assert.match(source, /setAspectRatio\("auto"\)/);
+assert.match(source, /setAspectRatio\(fallbackAspectRatio\)/);
 assert.match(providerSource, /aspectRatio:\s*selectedAspectRatio/);
 assert.match(composerSource, /value=\{aspectRatio\}/);
 assert.match(composerSource, /onAspectRatioChange\(event\.target\.value\)/);

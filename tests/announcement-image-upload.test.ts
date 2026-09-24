@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 
 const uploadRouteSource = readFileSync("src/app/api/admin/announcements/upload/route.ts", "utf8");
 const headerSource = readFileSync("src/components/layout/header.tsx", "utf8");
 const adminPageSource = readFileSync("src/app/admin/announcements/page.tsx", "utf8");
 
-assert.ok(existsSync("prisma/migrations/20260424145000_add_announcement_image/migration.sql"));
+assert.match(readFileSync("prisma/migrations/00000000000000_init/migration.sql", "utf8"), /"imageUrl" TEXT/);
 assert.match(uploadRouteSource, /requireAdmin/);
 assert.match(uploadRouteSource, /sharp/);
 assert.match(uploadRouteSource, /MAX_UPLOAD_BYTES = 5 \* 1024 \* 1024/);

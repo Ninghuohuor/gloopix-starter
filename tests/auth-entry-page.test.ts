@@ -49,7 +49,7 @@ assert.match(appShellSource, /<Header \/>/);
 assert.match(authShellSource, /md:grid-cols-2/);
 assert.match(authShellSource, /auth-visual-image/);
 assert.match(authShellSource, /\/assets\/login-register-visual\.png/);
-assert.match(authShellSource, /mb-6 text-3xl font-bold tracking-normal text-foreground">Gloopix/);
+assert.match(authShellSource, /mb-6 text-3xl font-bold tracking-normal text-foreground">\{branding\.logoText\}/);
 assert.doesNotMatch(authShellSource, /AI 图片生成工作台/);
 assert.doesNotMatch(authShellSource, /登录后进入生成页面/);
 assert.match(globalCssSource, /--font-app-sans/);

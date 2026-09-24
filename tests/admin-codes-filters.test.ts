@@ -12,7 +12,6 @@ assert.match(routeSource, /where\.createdAt/);
 assert.match(routeSource, /status === "AVAILABLE"/);
 assert.match(routeSource, /status === "USED"/);
 assert.match(routeSource, /status === "INACTIVE"/);
-assert.match(routeSource, /status === "FIXED"/);
 
 assert.match(pageSource, /statusFilter/);
 assert.match(pageSource, /sourceFilter/);

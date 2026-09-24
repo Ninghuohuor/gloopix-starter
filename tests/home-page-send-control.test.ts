@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 const source = readFileSync("src/app/page.tsx", "utf8");
 const composerSource = readFileSync("src/components/generation/chat-composer.tsx", "utf8");
 
-assert.match(composerSource, /disabled=\{loading\}/);
+assert.match(composerSource, /disabled=\{!canSubmit\}/);
 assert.match(composerSource, /aria-label="生成图片"/);
 assert.match(source, /nativeEvent\.isComposing/);
 assert.match(source, /isPromptComposingRef/);

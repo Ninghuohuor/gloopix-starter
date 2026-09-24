@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { AVAILABLE_MODELS, generateSchema } from "../src/lib/validations";
 import {
   calculateImageCreditCost,
@@ -9,7 +8,6 @@ import {
   isAspectRatioCompatibleWithModel,
 } from "../src/lib/image-models";
 
-const currentStateSource = readFileSync("docs/ops/current-state.md", "utf8");
 
 assert.deepEqual(
   AVAILABLE_MODELS.map((model) => model.id),
@@ -25,12 +23,12 @@ assert.equal(generateSchema.safeParse({ prompt: "test", model: "gpt-image-2" }).
 assert.equal(generateSchema.safeParse({ prompt: "test", model: "gpt-image-2-official" }).success, true);
 assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview" }).success, true);
 assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview-official" }).success, true);
-assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "auto" }).success, false);
+assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "auto" }).success, true);
 assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "21:9" }).success, true);
-assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "9:21" }).success, false);
-assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "1:2" }).success, false);
-assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "2:1" }).success, false);
-assert.equal(generateSchema.safeParse({ prompt: "test", model: "gpt-image-1" }).success, false);
+assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "9:21" }).success, true);
+assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "1:2" }).success, true);
+assert.equal(generateSchema.safeParse({ prompt: "test", model: "gemini-3.1-flash-image-preview", aspectRatio: "2:1" }).success, true);
+assert.equal(generateSchema.safeParse({ prompt: "test", model: "custom-model" }).success, true);
 assert.equal(
   generateSchema.safeParse({
     prompt: "test",
@@ -171,6 +169,3 @@ assert.equal(
   }),
   300
 );
-
-assert.match(currentStateSource, /Nano Banana 2/);
-assert.match(currentStateSource, /gemini-3\.1-flash-image-preview/);

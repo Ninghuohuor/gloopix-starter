@@ -7,15 +7,12 @@ const adminLayoutSource = readFileSync("src/app/admin/layout.tsx", "utf8");
 const usersRouteSource = readFileSync("src/app/api/admin/users/route.ts", "utf8");
 const userToggleRouteSource = readFileSync("src/app/api/admin/users/[id]/route.ts", "utf8");
 const usersPageSource = readFileSync("src/app/admin/users/page.tsx", "utf8");
-const lastLoginMigrationSource = readFileSync(
-  "prisma/migrations/20260426173000_add_user_last_login_at/migration.sql",
-  "utf8"
-);
+const initialMigrationSource = readFileSync("prisma/migrations/00000000000000_init/migration.sql", "utf8");
 
 assert.match(schemaSource, /isDisabled\s+Boolean\s+@default\(false\)/);
 assert.match(schemaSource, /lastLoginAt\s+DateTime\?/);
 assert.match(schemaSource, /lastActiveAt\s+DateTime\?/);
-assert.match(lastLoginMigrationSource, /ADD COLUMN "lastLoginAt" DATETIME/);
+assert.match(initialMigrationSource, /"lastLoginAt" DATETIME/);
 
 assert.match(authSource, /if \(user\.isDisabled\)\s*\{[\s\S]*return null;\s*\}/);
 assert.match(authSource, /const loginTime = new Date\(\)/);

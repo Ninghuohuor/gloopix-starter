@@ -43,4 +43,4 @@ assert.match(historySource, /min-\[380px\]:grid-cols-2/);
 assert.match(historySource, /h-10/);
 assert.match(promptsSource, /min-h-10/);
 assert.match(redeemSource, /h-10/);
-assert.match(creditsSource, /overflow-auto/);
+assert.match(creditsSource, /flex-wrap/);

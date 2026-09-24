@@ -17,7 +17,7 @@ assert.match(source, /w-\[min\(18rem,78vw\)\] shrink-0/);
 assert.match(source, /flex max-h-\[min\(18rem,78vw\)\] flex-col gap-2 overflow-y-auto/);
 assert.match(source, /切换生成结果图片/);
 assert.match(source, /查看第 \$\{index \+ 1\} 张生成图/);
-assert.match(source, /href=\{getActiveResultImageUrl\(img\)\}/);
+assert.match(source, /href=\{`\/api\/image-download\?url=\$\{encodeURIComponent\(getActiveResultImageUrl\(img\)\)\}`\}/);
 assert.doesNotMatch(source, /flex max-w-full gap-3 overflow-x-auto pb-1/);
 assert.doesNotMatch(source, /img\.imageUrls\.length === 1/);
 assert.doesNotMatch(source, /sm:grid-cols-2/);

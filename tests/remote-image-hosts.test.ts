@@ -11,5 +11,5 @@ assert.match(nextConfigSource, /hostname:\s*"upload\.apimart\.ai"/);
 
 assert.match(pageSource, /src=\{imageUrl\}/);
 assert.match(pageSource, /openResultPreview\(message: ChatMessage, imageUrl: string, index: number\)/);
-assert.match(pageSource, /imageUrls,\s*activeIndex: index/);
+assert.match(pageSource, /imageUrls,[\s\S]*activeIndex: index/);
 assert.match(pageSource, /unoptimized=\{shouldBypassImageOptimizer\(imageUrl\)\}/);

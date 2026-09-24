@@ -21,7 +21,7 @@ assert.match(validationsSource, /max\(5000/);
 
 assert.match(headerSource, /\/api\/announcements\/current/);
 assert.match(headerSource, /ANNOUNCEMENT_REFRESH_INTERVAL_MS = 30 \* 1000/);
-assert.match(headerSource, /if \(status !== "authenticated"\) \{/);
+assert.match(headerSource, /status !== "authenticated" \|\| !features\.announcementsEnabled/);
 assert.match(headerSource, /setAnnouncement\(null\)/);
 assert.match(headerSource, /setInterval\(refreshAnnouncement,\s*ANNOUNCEMENT_REFRESH_INTERVAL_MS\)/);
 assert.match(headerSource, /window\.addEventListener\("focus", refreshAnnouncement\)/);
@@ -31,7 +31,7 @@ assert.match(headerSource, /storedValue === getAnnouncementReadMarker\(announcem
 assert.match(headerSource, /localStorage\.setItem\(ANNOUNCEMENT_READ_KEY, getAnnouncementReadMarker\(announcement\)\)/);
 assert.match(headerSource, /公告/);
 assert.match(headerSource, /gloopix-announcement-read-id/);
-assert.match(headerSource, /\{session\?\.user && \(\s*<Button[\s\S]*aria-label="查看公告"/);
+assert.match(headerSource, /session\?\.user && features\.announcementsEnabled/);
 assert.match(headerSource, /rounded-full bg-destructive/);
 
 assert.match(adminLayoutSource, /href: "\/admin\/announcements"/);

@@ -7,7 +7,7 @@ const taskRouteSource = readFileSync("src/app/api/user/generation-tasks/route.ts
 const providerSource = readFileSync("src/components/generation/generation-session-provider.tsx", "utf8");
 const queueWorkerSource = readFileSync("src/lib/generation-queue.ts", "utf8");
 
-assert.ok(existsSync("prisma/migrations/20260424151000_add_generation_task_metadata/migration.sql"));
+assert.ok(existsSync("prisma/migrations/00000000000000_init/migration.sql"));
 assert.match(schemaSource, /generationId\s+String\?/);
 assert.match(schemaSource, /completedAt\s+DateTime\?/);
 assert.match(schemaSource, /@@index\(\[userId,\s*generationId,\s*createdAt\]\)/);

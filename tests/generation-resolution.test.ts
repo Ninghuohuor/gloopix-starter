@@ -17,7 +17,7 @@ assert.deepEqual(
 
 assert.equal(generateSchema.safeParse({ prompt: "test", resolution: "1k" }).success, true);
 assert.equal(generateSchema.safeParse({ prompt: "test", resolution: "2k" }).success, true);
-assert.equal(generateSchema.safeParse({ prompt: "test", resolution: "4k" }).success, false);
+assert.equal(generateSchema.safeParse({ prompt: "test", resolution: "4k" }).success, true);
 assert.equal(generateSchema.safeParse({ prompt: "test", aspectRatio: "16:9", resolution: "4k" }).success, true);
 assert.equal(generateSchema.safeParse({ prompt: "test", aspectRatio: "9:16", resolution: "4k" }).success, true);
 assert.equal(generateSchema.safeParse({ prompt: "test", aspectRatio: "2:1", resolution: "4k" }).success, true);
@@ -49,7 +49,8 @@ assert.match(pageSource, /selectedResolution:\s*resolution/);
 assert.match(pageSource, /selectedResolution:\s*message\.resolution/);
 
 assert.match(routeSource, /parsed\.data\.resolution/);
-assert.match(routeSource, /calculateImageCreditCost/);
+assert.match(routeSource, /getModelCreditCost/);
+assert.match(routeSource, /modelConfig\.supportedResolutions && !modelConfig\.supportedResolutions\.includes\(parsed\.data\.resolution\)/);
 assert.match(routeSource, /resolution:\s*parsed\.data\.resolution/);
 
 assert.match(openaiSource, /resolution\?:\s*"1k" \| "2k" \| "4k"/);

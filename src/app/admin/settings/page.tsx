@@ -235,7 +235,7 @@ export default function AdminSettingsPage() {
         </Button>
       </CardHeader>
       <CardContent className="space-y-5">
-        <nav aria-label="API 列表" className="grid gap-2 sm:grid-cols-2">
+        <nav aria-label="API 列表" className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2">
           {settings.providers.map((provider, providerIndex) => {
             const selected = provider.id === activeProviderId;
             const hasKey = Boolean(apiKeys[provider.id]?.trim()) || (provider.hasApiKey && !clearApiKeys[provider.id]);
@@ -245,7 +245,7 @@ export default function AdminSettingsPage() {
               aria-pressed={selected}
               aria-controls={selected ? `provider-editor-${provider.id}` : undefined}
               onClick={() => setSelectedProviderId(provider.id)}
-              className={`min-h-20 rounded-lg border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selected ? "border-primary/70 bg-primary/10" : "border-border bg-background hover:border-foreground/30 hover:bg-muted/30"}`}
+              className={`min-h-20 min-w-0 rounded-lg border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selected ? "border-primary/70 bg-primary/10" : "border-border bg-background hover:border-foreground/30 hover:bg-muted/30"}`}
             >
               <span className="flex items-center justify-between gap-3">
                 <span className="flex min-w-0 items-center gap-2.5">
